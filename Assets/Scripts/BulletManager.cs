@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 //U should be informed that all classes which u define are implicitly derived from the class Object.
@@ -94,46 +96,59 @@ public class BulletManager : MonoBehaviour {
     public static BulletManager Manager;
     //using static can make it directly be accessed by BulletManager.bulletManager
     //without creating an instance of this class
-    
-    [SerializeField]private Bullet bulletPrefab;
+
+    [SerializeField] private Bullet bulletPrefab;
+
     //the bullet prefab was filled in the blank
     //it actually get the address of the bullet component attached to the prefab
     //when the bullet instance(component) is created,
     //the system will automatically create a clone of the prefab for you
-    [SerializeField]private GameObject bulletSpawner;
+    [SerializeField] private GameObject bulletSpawner;
+
     //TODO: Temporarily initiated here, change it later.
-    
-    [SerializeField]private PlayerController player;
-    
+    public GameObject Moon;
+    public LaserHead Head;
+    public LaserHead[] List;
+    public int timer = 0;
+
+    private PlayerController _player;
+    public PlayerController Player { set; get; }
+
     private Stack<Bullet> _bulletPool;
-    
+
     private Bullet _tempBullet;
     private BulletProperties _tempProp;
-    
+
     #region StepEvents
 
     public void Step0_0(Bullet bullet) {
         _tempProp = bullet.Prop;
-        _tempProp.speed = 0.5f;
-        //if (_tempProp.Speed >= 1f)
-        //    _tempProp.Speed = 1f;
-        
+        _tempProp.speed += 0.03f;
+        if (_tempProp.speed >= 4f)
+            _tempProp.speed = 4f;
+
         //multiply it forward to make it faster
-        _tempProp.worldPosition
-            += Time.deltaTime * _tempProp.speed * _tempProp.direction;
+        _tempProp.worldPosition += Time.deltaTime * _tempProp.speed * _tempProp.direction;
 
-        #region Debug
+        BulletRefresh(bullet, _tempProp);
+        bullet.CheckOnField();
+    }
 
-        //float dis = Vector3.Magnitude(_tempProp.WorldPosition - bullet.transform.position);
-        //Debug.Log(_tempProp.Direction.ToString() + " " + Time.time.ToString());
+    public void Step0_1(Bullet bullet) {
+        _tempProp = bullet.Prop;
+        _tempProp.speed += 0.03f;
+        if (_tempProp.speed >= 3f)
+            _tempProp.speed = 3f;
 
-        #endregion
+        //multiply it forward to make it faster
+        _tempProp.worldPosition += Time.deltaTime * _tempProp.speed * _tempProp.direction;
 
-        BulletRefresh(bullet,_tempProp);
+        BulletRefresh(bullet, _tempProp);
+        bullet.CheckOnField();
     }
 
     #endregion
-    
+
     /// <summary>
     /// Creating Some bullets and add them to the bullet pool.
     /// </summary>
@@ -146,10 +161,11 @@ public class BulletManager : MonoBehaviour {
         if (num > 512) {
             num = 512;
         }
-        
+
         for (int i = 1; i <= num; i++) {
             _tempBullet = Instantiate(bulletPrefab);
             _tempBullet.gameObject.SetActive(false);
+            _tempBullet.Player = _player;
             _bulletPool.Push(_tempBullet);
         }
     }
@@ -167,17 +183,19 @@ public class BulletManager : MonoBehaviour {
     /// </summary>
     /// <returns>the index of the activated bullet</returns>
     public Bullet BulletActivate() {
-        if(_bulletPool.Count <= 16) {
+        if (_bulletPool.Count <= 16) {
             BulletPoolAdd(16);
         }
+
         _tempBullet = _bulletPool.Pop();
         _tempBullet.gameObject.SetActive(true);
         _tempBullet.Grazed = false;
+        //_tempBullet.Renderer.enabled = true;
         return _tempBullet;
     }
 
     /// <summary>
-    /// Recycle a bullet by freezing it <del>and remove it from the bullet field.</del>
+    /// Recycle a bullet by inactivating it.
     /// </summary>
     /// <param name="bullet"></param>
     public void BulletInactivate(Bullet bullet) {
@@ -187,7 +205,7 @@ public class BulletManager : MonoBehaviour {
         _bulletPool.Push(bullet);
     }
 
-    
+
     // Insert the bullet into the bullet field for the first time where its root indicates its belonging.
     /// <summary>
     /// Inject the property struct into the bullet and refresh its states.
@@ -195,11 +213,12 @@ public class BulletManager : MonoBehaviour {
     /// </summary>
     /// <param name="bullet">The index of bullet you want to refresh.</param>
     /// <param name="prop">The property of the bullet you want to inject.</param> 
-    public void BulletRefresh(Bullet bullet,BulletProperties prop/*,Link link*/) {
+    public void BulletRefresh(Bullet bullet, BulletProperties prop /*,Link link*/) {
         bullet.Prop = prop;
     }
-    
+
     #region Abandoned
+
     //abandoned. bullet dealing with themselves are better
     //Update() is executed strictly one time a frame so there are no necessity to let the manager
     //deal with all the things which is not very object oriented.
@@ -251,13 +270,35 @@ public class BulletManager : MonoBehaviour {
             }
         }
     }*/
+
     #endregion
 
+    private void Awake() {
+        //Singleton check
+        if (Manager == null) Manager = this;
+        else DestroyImmediate(this.gameObject);
+    }
+
     private void Start() {
-        Manager = this;
         _bulletPool = new Stack<Bullet>();
         _tempProp = new BulletProperties();
         BulletPoolAdd(512);
         Instantiate(bulletSpawner);
+        bulletSpawner.transform.position = Moon.transform.position;
+        List = new LaserHead[5];
+        for (int i = 13; i <= 17; i++) {
+            List[i - 13] = Instantiate(Head.gameObject).GetComponent<LaserHead>();
+        }
+    }
+
+    private void Update() {
+        timer++;
+        for (int i = 13; i <= 17; i++) {
+            var rad = Mathf.Deg2Rad * i * 18f;
+            var dist = (10f + 2f * Mathf.Sin(Mathf.Deg2Rad * (i * 18f + timer)));
+            var dir = new Vector3(Mathf.Cos(rad), Mathf.Sin((rad)), 0f);
+            var o = new Vector3(0f, 9f, 0f);
+            List[i - 13].transform.position = o + dist * dir;
+        }
     }
 }

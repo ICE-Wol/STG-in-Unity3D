@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7232516898323378627}
-  - component: {fileID: 8267155610058689350}
   - component: {fileID: 8993787310067180184}
-  m_Layer: 3
+  - component: {fileID: 7564652781172049244}
+  m_Layer: 6
   m_Name: Bullet
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -33,7 +33,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &8267155610058689350
+--- !u!114 &8993787310067180184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808456855529485870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43332ed499539942a5abfca2b4f70b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderer: {fileID: 7564652781172049244}
+  prop:
+    radius: 0
+    type: 0
+    color: {r: 0, g: 0, b: 0, a: 0}
+    worldPosition: {x: 0, y: 0, z: 0}
+    speed: 0
+    direction: {x: 0, y: 0, z: 0}
+    acceleration: 0
+    rotation: 0
+    isLaser: 0
+    bullet: {fileID: 0}
+    spawnTime: 0
+--- !u!212 &7564652781172049244
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -71,44 +96,17 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1040850089
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 281884813, guid: 8b611477e1fd1c34abfe91beeffeda8a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.25, y: 0.25}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8993787310067180184
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1808456855529485870}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f43332ed499539942a5abfca2b4f70b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prop:
-    radius: 0
-    type: 0
-    color: {r: 0, g: 0, b: 0, a: 0}
-    worldPosition: {x: 0, y: 0, z: 0}
-    speed: 0
-    direction: {x: 0, y: 0, z: 0}
-    acceleration: 0
-    rotation: 0
-    bullet: {fileID: 0}
-    spawnTime: 0
-    previous: {fileID: 0}
-    follow: {fileID: 0}
-  player: {fileID: 6113916965663502932, guid: 444c9cc93476eb74995a2b1edecdb732, type: 3}
-  render: {fileID: 8267155610058689350}

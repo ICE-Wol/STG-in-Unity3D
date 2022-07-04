@@ -52,8 +52,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textMesh: {fileID: 5139187840394503807}
-  testplayer: {fileID: 0}
-  textbullet: {fileID: 0}
+  instantiateList:
+  - {fileID: 4218034707889676462, guid: c6704179cc181fb46affde504e364068, type: 3}
+  - {fileID: 4017739737585200578, guid: 444c9cc93476eb74995a2b1edecdb732, type: 3}
 --- !u!222 &5139187840394503800
 CanvasRenderer:
   m_ObjectHideFlags: 0

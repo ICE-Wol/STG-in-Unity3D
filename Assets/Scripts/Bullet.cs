@@ -20,13 +20,11 @@ public struct BulletProperties {
     public Vector3 direction;
     public float acceleration;
     public float rotation;
+    public bool isLaser;
 
     [Header("Modify these values only when necessary.")]
     public Bullet bullet;
-
     public long spawnTime;
-    public Bullet previous;
-    public Bullet follow;
 
     /// <summary>
     /// Return the screen position of the bullet in vector2.
@@ -45,15 +43,31 @@ enum BulletStates {
 };
 
 public class Bullet : MonoBehaviour {
-    [SerializeField] private SpriteRenderer render;
-    [SerializeField] private PlayerController player;
+    [SerializeField] private SpriteRenderer renderer;
+    public SpriteRenderer Renderer { set; get; }
     [SerializeField] private BulletProperties prop;
+    private PlayerController _player;
+    public PlayerController Player {
+        set;get;
+    }
+    //alert that this player should be exactly pointing to the player singleton on the screen.
+    //Just drag the prefab into the inspector will only mess things up.
+    //Just fill in this parameter when the bullet is initiated.
+    //By the way the property is write only(by the outer field).
 
+    private long[] _timer;
+    private Vector3 _curVerDir;
+    public Vector3 CurVerDir { set; get; }
+
+    public Vector3 CurHorDir => Vector3.Cross(CurVerDir, Vector3.back).normalized;
+        
+    
     public BulletProperties Prop {
         get => prop;
         set {
             prop = value;
-            render.color = value.color;
+            renderer.color = value.color;
+            CurVerDir = (value.worldPosition - transform.position).normalized;
             transform.position = value.worldPosition;
         }
     }
@@ -76,7 +90,7 @@ public class Bullet : MonoBehaviour {
 
     private bool _grazed;
     public bool Grazed { set; get; }
-
+    
     #region Abandoned
 
     //same as the Update() event. Doesnt worth the trouble.
@@ -84,6 +98,20 @@ public class Bullet : MonoBehaviour {
         StepEvent?.Invoke(this);
     }*/
     //private void Destroy(){}
+
+    #endregion
+
+    #region laser
+
+    private LaserHead _head;
+    public LaserHead Head { set; get; }
+    private Bullet _prev;
+    public Bullet Prev { set; get; }
+    private Bullet _next;
+    public Bullet Next { set; get; }
+    private int _order;
+    public int Order { set; get; }
+
 
     #endregion
 
@@ -101,7 +129,8 @@ public class Bullet : MonoBehaviour {
     /// check the current bullet is on screen or not.
     /// If it leaves the screen, then inactivate it;
     /// </summary>
-    private void CheckOnField() {
+    public void CheckOnField() {
+        if (this._head != null) return;
         Vector3 position = prop.ScreenPosition;
         if (!(position.x <= -64f) && !(position.x >= (Screen.width + 64f)) && !(position.y <= -64f) &&
             !(position.y >= (Screen.height + 64f))) return;
@@ -127,15 +156,20 @@ public class Bullet : MonoBehaviour {
     /// Alert that the z position will be ignored.
     /// </summary>
     private void CheckDistance() {
-        float distance = ((Vector2) player.transform.position - (Vector2) prop.worldPosition).magnitude;
-        if (!_grazed && (prop.radius + player.GrazeRadius) >= distance) {
+        //null ref handleeeeer.
+        if (_player == null) _player = PlayerController.Controller;
+        
+        float distance = ((Vector2) _player.transform.position - 
+                          (Vector2) prop.worldPosition).magnitude;
+
+        if (!_grazed && (prop.radius + _player.GrazeRadius) >= distance) {
             _grazed = true;
             GameManager.Manager.NumGraze += 1;
         }
 
-        if (prop.radius + player.HitRadius >= distance) {
+        if (prop.radius + _player.HitRadius >= distance) {
             GameManager.Manager.NumHit += 1;
-            BulletManager.Manager.BulletInactivate(this);
+            //BulletManager.Manager.BulletInactivate(this);
         }
     }
 
@@ -145,7 +179,6 @@ public class Bullet : MonoBehaviour {
     //according to the length of the frame.
     private void Update() { 
         StepEvent?.Invoke(this);
-        //CheckOnField();
         CheckDistance(); 
     }
 

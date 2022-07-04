@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
+    public static PlayerController Controller;
     [SerializeField] private float hitRadius;
     public float HitRadius {
         get {
@@ -41,6 +43,12 @@ public class PlayerController : MonoBehaviour {
             += (_slowMode > 0.5f ? speed * slowRate : speed) 
                * Time.deltaTime * _direction;
         
+    }
+
+    private void Awake() {
+        //Singleton check
+        if (Controller == null) Controller = this;
+        else DestroyImmediate(this.gameObject);
     }
 
     private void Update() {

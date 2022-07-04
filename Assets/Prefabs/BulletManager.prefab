@@ -46,4 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 8993787310067180184, guid: ed764703bfbde1f409a22dbbaca81d88, type: 3}
   bulletSpawner: {fileID: 5747519689366926419, guid: dfa78e74a8854284692251d9bc94cc75, type: 3}
-  player: {fileID: 6113916965663502932, guid: 444c9cc93476eb74995a2b1edecdb732, type: 3}
+  Moon: {fileID: 4266511352799322169, guid: 0d87d3a03908f114181841cef308c966, type: 3}
+  Head: {fileID: 6224545348229173891, guid: 31f77348cf7394d489b9692dba10a195, type: 3}
+  List: []
+  timer: 0
