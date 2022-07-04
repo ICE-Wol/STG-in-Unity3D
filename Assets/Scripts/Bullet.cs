@@ -12,8 +12,7 @@ using UnityEngine.UIElements;
 
 [Serializable]
 public struct BulletProperties {
-    [Header("Basic Properties")]
-    public float radius;
+    [Header("Basic Properties")] public float radius;
     public int type;
     public Color color;
     public Vector3 worldPosition;
@@ -21,9 +20,10 @@ public struct BulletProperties {
     public Vector3 direction;
     public float acceleration;
     public float rotation;
-    
+
     [Header("Modify these values only when necessary.")]
     public Bullet bullet;
+
     public long spawnTime;
     public Bullet previous;
     public Bullet follow;
@@ -32,9 +32,9 @@ public struct BulletProperties {
     /// Return the screen position of the bullet in vector2.
     /// if <c>Camera.main == null</c>, the default value of vector2 will be returned instead. 
     /// </summary>
-    public Vector2 ScreenPosition
-        => Camera.main != null ?
-            Camera.main.WorldToScreenPoint(worldPosition) : default(Vector2);
+    public Vector2 ScreenPosition {
+        get => Camera.main != null ? Camera.main.WorldToScreenPoint(worldPosition) : default(Vector2);
+    }
 }
 
 enum BulletStates {
@@ -48,6 +48,7 @@ public class Bullet : MonoBehaviour {
     [SerializeField] private SpriteRenderer render;
     [SerializeField] private PlayerController player;
     [SerializeField] private BulletProperties prop;
+
     public BulletProperties Prop {
         get => prop;
         set {
@@ -56,7 +57,7 @@ public class Bullet : MonoBehaviour {
             transform.position = value.worldPosition;
         }
     }
-    
+
     /// <summary>
     /// The state machine of the bullet.
     /// </summary>
@@ -66,18 +67,15 @@ public class Bullet : MonoBehaviour {
     /// Things being done per frame.
     /// </summary>
     public event Action<Bullet> StepEvent;
-    
+
     /// <summary>
     /// Things being done when a bullet is destroyed including the basic effects of destruction.
     /// Will be executed only once after being triggered.
-    /// </summary>
+    /// /// </summary>
     public event Action<Bullet> DestroyEvent;
 
     private bool _grazed;
-    public bool Grazed {
-        set;
-        get;
-    }
+    public bool Grazed { set; get; }
 
     #region Abandoned
 
@@ -107,15 +105,15 @@ public class Bullet : MonoBehaviour {
         Vector3 position = prop.ScreenPosition;
         if (!(position.x <= -64f) && !(position.x >= (Screen.width + 64f)) && !(position.y <= -64f) &&
             !(position.y >= (Screen.height + 64f))) return;
-        InactivateEvent();
-        BulletManager.Manager.BulletInactivate(this);
-    }
+            InactivateEvent();
+            BulletManager.Manager.BulletInactivate(this);
+        }
 
     private void CheckState() {
         switch (_states) {
             case BulletStates.Spawning:
                 break;
-            case BulletStates.Activated:
+            case BulletStates.Activated: 
                 break;
             case BulletStates.Destroying:
                 break;
@@ -123,46 +121,36 @@ public class Bullet : MonoBehaviour {
                 break;
         }
     }
-    
+
     /// <summary>
     /// Check the distance between the bullet and player.
     /// Alert that the z position will be ignored.
     /// </summary>
     private void CheckDistance() {
-        float distance = ((Vector2)player.transform.position - (Vector2)prop.worldPosition).magnitude;
+        float distance = ((Vector2) player.transform.position - (Vector2) prop.worldPosition).magnitude;
         if (!_grazed && (prop.radius + player.GrazeRadius) >= distance) {
             _grazed = true;
             GameManager.Manager.NumGraze += 1;
         }
+
         if (prop.radius + player.HitRadius >= distance) {
             GameManager.Manager.NumHit += 1;
             BulletManager.Manager.BulletInactivate(this);
         }
     }
 
-
-    public Vector3 Position {
-        set {
-            transform.position = new Vector3(value.x,value.y,10f);
-        }
-        get {
-            return transform.position;
-        }
-    }
     //In unity, Update is called once a frame,
     //so its ok to use update here to get a stable refresh rate.
     //On the contrast FixedUpdate will be executed more or less than once
     //according to the length of the frame.
-    private void Update() {
+    private void Update() { 
         StepEvent?.Invoke(this);
         //CheckOnField();
-        //transform.position = new Vector3(transform.position.x, transform.position.y, 10f);
-        CheckDistance();
+        CheckDistance(); 
     }
 
-    private void OnDrawGizmos() {
+    private void OnDrawGizmos() { 
         Gizmos.color = _grazed ? Color.green : Color.magenta;
-        Gizmos.DrawWireSphere(prop.worldPosition,prop.radius);
-        
+        Gizmos.DrawWireSphere(prop.worldPosition, prop.radius);
     }
 }

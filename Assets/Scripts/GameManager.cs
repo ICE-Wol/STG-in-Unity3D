@@ -21,23 +21,24 @@ public class GameManager : MonoBehaviour
         textMesh = GetComponent<TextMeshProUGUI>();
     }
 
-
     #region Debug
-    public GameObject test;
+    /*public GameObject test;
     public PlayerController testplayer;
     private Bullet textbullet;
     private void Update() {
         textbullet = test.GetComponent<Bullet>();
         BulletProperties bp = new BulletProperties();
+        bp.radius = 0.2f;
         bp.bullet = textbullet;
-        bp.color = Color.red;
-        bp.worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        bp.color = Color.white;
+        var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        bp.worldPosition = new Vector3(pos.x, pos.y, 0f);
         textbullet.Prop = bp;
         textMesh.text
             = "Graze: " + NumGraze + "\n" + "Hit: " + NumHit +
               "Dis3 " + ((Vector2)testplayer.transform.position - (Vector2)textbullet.transform.position).magnitude +
               "\n Dis2 " + (testplayer.ScreenPosition - textbullet.Prop.ScreenPosition).magnitude;
 
-    }
+    }*/
     #endregion
 }
