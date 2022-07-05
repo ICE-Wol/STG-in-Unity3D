@@ -30,7 +30,7 @@ public class Light : MonoBehaviour {
     void Update() {
         timer++;
         transform.position = moon.transform.position;
-        var scale = (1.6f + 0.25f * Mathf.Sin(timer / 30f * Mathf.Deg2Rad));
+        var scale = (1.8f + 0.25f * Mathf.Sin(timer / 30f * Mathf.Deg2Rad));
         transform.localScale = new Vector3(scale, scale, 0);
         render.color = new Color(1, 1, 1, 0.9f + 0.25f * Mathf.Sin(timer / 30f * Mathf.Deg2Rad));
 

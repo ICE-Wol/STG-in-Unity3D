@@ -177,7 +177,7 @@ public class Bullet : MonoBehaviour {
     //so its ok to use update here to get a stable refresh rate.
     //On the contrast FixedUpdate will be executed more or less than once
     //according to the length of the frame.
-    private void Update() { 
+    private void Update() {
         StepEvent?.Invoke(this);
         CheckDistance(); 
     }
